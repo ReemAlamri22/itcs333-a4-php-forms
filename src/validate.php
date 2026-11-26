@@ -1,4 +1,3 @@
-
 <?php
 declare(strict_types=1);
 
@@ -17,4 +16,3 @@ function validate_length(string $v, int $min, int $max): bool
     $len = mb_strlen($v);
     return $len >= $min && $len <= $max;
 }
-
