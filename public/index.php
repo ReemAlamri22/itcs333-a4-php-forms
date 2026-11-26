@@ -21,19 +21,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!validate_required($name)) {
         $name_error = "Name is required.";
     } elseif (!validate_length($name, 2, 60)) {
-        $name_error = "Name must be 2-60 characters.";
+        $name_error = "Invalid name: must be 2-60 characters.";
     }
 
     if (!validate_required($email)) {
         $email_error = "Email is required.";
     } elseif (!validate_email($email)) {
-        $email_error = "Enter a valid email address.";
+        $email_error = "Invalid email address.";
     }
 
     if (!validate_required($message)) {
         $message_error = "Message is required.";
     } elseif (!validate_length($message, 10, 1000)) {
-        $message_error = "Message must be 10-1000 characters.";
+        $message_error = "Invalid message: must be 10-1000 characters.";
     }
 
     if ($name_error == "" && $email_error == "" && $message_error == "") {
