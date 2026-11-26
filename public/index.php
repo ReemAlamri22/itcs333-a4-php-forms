@@ -1,10 +1,9 @@
-
 <?php
 declare(strict_types=1);
+error_reporting(E_ALL);
 
 require_once __DIR__ . '/../src/validate.php';
 
-// Variables
 $name = "";
 $email = "";
 $message = "";
@@ -13,95 +12,62 @@ $name_error = "";
 $email_error = "";
 $message_error = "";
 
-// Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    // Get values from the form
-    $name = $_POST['name'] ?? "";
-    $email = $_POST['email'] ?? "";
-    $message = $_POST['message'] ?? "";
+    $name = isset($_POST['name']) && is_string($_POST['name']) ? trim($_POST['name']) : "";
+    $email = isset($_POST['email']) && is_string($_POST['email']) ? trim($_POST['email']) : "";
+    $message = isset($_POST['message']) && is_string($_POST['message']) ? trim($_POST['message']) : "";
 
-    // Check name
     if (!validate_required($name)) {
-        $name_error = "Name is required";
+        $name_error = "Name is required.";
     } elseif (!validate_length($name, 2, 60)) {
-        $name_error = "Name must be between 2 and 60 characters";
+        $name_error = "Name must be 2-60 characters.";
     }
 
-    // Check email
-    if (!validate_email($email)) {
-        $email_error = "Please enter a valid email";
+    if (!validate_required($email)) {
+        $email_error = "Email is required.";
+    } elseif (!validate_email($email)) {
+        $email_error = "Enter a valid email address.";
     }
 
-    // Check message
     if (!validate_required($message)) {
-        $message_error = "Message is required";
+        $message_error = "Message is required.";
     } elseif (!validate_length($message, 10, 1000)) {
-        $message_error = "Message must be between 10 and 1000 characters";
+        $message_error = "Message must be 10-1000 characters.";
     }
 
-    // If all fields are correct
     if ($name_error == "" && $email_error == "" && $message_error == "") {
-        header("Location: index.php?success=1", true, 303);
-        exit();
+        header("Location: success.php");
+        exit;
     }
-}
-
-// Function to protect output
-function e(string $value): string {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Contact Us</title>
+  <meta charset="utf-8">
+  <title>Contact Us</title>
 </head>
 <body>
+  <h1>Contact Us</h1>
+  <form method="post" action="index.php">
+    <label>Name
+      <input type="text" name="name" value="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>">
+    </label>
+    <span style="color:red"><?php echo htmlspecialchars($name_error, ENT_QUOTES, 'UTF-8'); ?></span><br>
 
-<?php
-if (isset($_GET['success']) && $_GET['success'] == '1') {
-?>
+    <label>Email
+      <input type="email" name="email" value="<?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>">
+    </label>
+    <span style="color:red"><?php echo htmlspecialchars($email_error, ENT_QUOTES, 'UTF-8'); ?></span><br>
 
-    <h1>Thank You!</h1>
-    <p>Your message has been sent successfully.</p>
-    <a href="index.php">Back to the form</a>
+    <label>Message
+      <textarea name="message"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></textarea>
+    </label>
+    <span style="color:red"><?php echo htmlspecialchars($message_error, ENT_QUOTES, 'UTF-8'); ?></span><br>
 
-<?php
-} else {
-?>
-
-    <h1>Contact Us</h1>
-
-    <form method="POST" action="index.php">
-
-        <label>Name:</label>
-        <input type="text" name="name"
-               value="<?php echo e($name); ?>">
-        <?php echo e($name_error); ?>
-        <br><br>
-
-        <label>Email:</label>
-        <input type="text" name="email"
-               value="<?php echo e($email); ?>">
-        <?php echo e($email_error); ?>
-        <br><br>
-
-        <label>Message:</label>
-        <textarea name="message"><?php echo e($message); ?></textarea>
-        <?php echo e($message_error); ?>
-        <br><br>
-
-        <button type="submit">Send</button>
-
-    </form>
-
-<?php
-}
-?>
-
+    <button type="submit">Send</button>
+  </form>
 </body>
 </html>
 
